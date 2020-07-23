@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="button_normal">#00000000</color>
+    <color name="colorAccentTrans">#80ffa000</color>
+    <color name="colorDarkTrans">#80607d8b</color>
+    <color name="link_bg">#2200ffff</color>
+    <color name="muPDFReaderView_bg">#FFFFFF</color>
+    <color name="muPDFReaderView_dark_bg">#808080</color>
+    <color name="paint_color">#0000FF</color>
+    <color name="rv_item_line_bg">#eeeeee</color>
+    <color name="rv_item_line_tv">#000000</color>
+    <color name="search_bg">#440000ff</color>
+    <color name="text_normal">#fafafa</color>
+    <color name="text_normalTrans">#80fafafa</color>
+    <string name="cancel">Cancel</string>
+    <string name="cannot_open_buffer">Cannot Open Buffer</string>
+    <string name="cannot_open_document">Cannot open the file, please check the file format is correct</string>
+    <string name="cannot_open_file_Path">Can\'t open file: %1$s</string>
+    <string name="choose_value">Select value</string>
+    <string name="copied_to_clipboard">Has been copied to the clipboard</string>
+    <string name="copy_text">text Copied</string>
+    <string name="dialog_title">prompt</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="document_has_changes_save_them">The file has been modified, is it saved?</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="fill_out_text_field">Fill in the text field</string>
+    <string name="no">No</string>
+    <string name="no_further_occurrences_found">No more Result found</string>
+    <string name="no_text_selected">No text selected</string>
+    <string name="not_supported">Not Supported</string>
+    <string name="nothing_to_save">No content to save</string>
+    <string name="okay">Okay</string>
+    <string name="pdf_tools_accept">Accept</string>
+    <string name="pdf_tools_copy">copy</string>
+    <string name="pdf_tools_delete">delete</string>
+    <string name="pdf_tools_draw_annotation">Please draw</string>
+    <string name="pdf_tools_highlight">Highlight</string>
+    <string name="pdf_tools_ink">Hand Painted</string>
+    <string name="pdf_tools_outline_title">Table of Contents</string>
+    <string name="pdf_tools_search">Please enter the content to search</string>
+    <string name="pdf_tools_search_backwards">Search backwards</string>
+    <string name="pdf_tools_search_document">Search document</string>
+    <string name="pdf_tools_search_forwards">Search forwards</string>
+    <string name="pdf_tools_strike_out">Strikethrough</string>
+    <string name="pdf_tools_toggle_links">Highlight and enable links</string>
+    <string name="pdf_tools_toggle_reflow_mode" translatable="false">Toggle reflow mode</string>
+    <string name="pdf_tools_underline">UnderLine</string>
+    <string name = "pdf_tools_dark">Dark</string>
+    <string name="searching">Searching…</string>
+    <string name="select_certificate_and_sign">Choose a certificate and sign?</string>
+    <string name="select_text">Please select text</string>
+    <string name="signature_checked">Signature checked</string>
+    <string name="text_not_found">Text not Found</string>
+    <string name="yes">yes</string>
+</resources>
