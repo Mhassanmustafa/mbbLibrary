@@ -49,13 +49,13 @@ public class MuPDFCore {
 			int pageW, int pageH,
 			int patchX, int patchY,
 			int patchW, int patchH,
-			long cookiePtr);
+			long cookiePtr, int mode);
 	private native void updatePageInternal(Bitmap bitmap,
 			int page,
 			int pageW, int pageH,
 			int patchX, int patchY,
 			int patchW, int patchH,
-			long cookiePtr);
+			long cookiePtr, int mode);
 	private native RectF[] searchPage(String text);
 	private native TextChar[][][][] text();
 	private native byte[] textAsHtml();

@@ -96,6 +96,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
     private SearchTask mSearchTask;
     private boolean mLinkHighlight = false;
+	private int currentPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
