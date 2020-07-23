@@ -1,4 +1,4 @@
-description = 'react-native-mupdf'
+description = 'mbbLibrary'
 
 buildscript {
     repositories {
