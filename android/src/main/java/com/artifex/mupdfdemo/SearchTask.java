@@ -8,7 +8,7 @@ import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Handler;
 
-import com.github.react.sextant.R;
+import com.github.react.mbbLibrary.R;
 
 class ProgressDialogX extends ProgressDialog {
 	ProgressDialogX(Context context) {

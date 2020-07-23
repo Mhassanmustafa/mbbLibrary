@@ -6,9 +6,9 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
-import com.github.react.sextant.R;
-import com.github.react.sextant.RCTMuPdfModule;
-import com.github.react.sextant.constants.RCTEnum;
+import com.github.react.mbbLibrary.R;
+import com.github.react.mbbLibrary.RCTMuPdfModule;
+import com.github.react.mbbLibrary.constants.RCTEnum;
 
 import java.util.ArrayList;
 

@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.github.react.sextant.util.SharedPreferencesUtil;
+import com.github.react.mbbLibrary.util.SharedPreferencesUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
