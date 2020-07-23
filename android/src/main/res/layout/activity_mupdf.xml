@@ -18,15 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"/>
-        <Button
-            android:id="@+id/same_screen_end"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/pdf_same_screen_btn"
-            android:textColor="#FFFFFFFF"
-            android:text="结束同屏"/>
+        
     </LinearLayout>
     <include
         layout="@layout/pdf_tools"/>

@@ -443,6 +443,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
                 }
                 mPageNumberView.setText(String.format("%d / %d", i + 1,
                         muPDFCore.countPages()));
+						currentPage = i;
                 mPageSlider.setMax((muPDFCore.countPages() - 1) * mPageSliderRes);
                 mPageSlider.setProgress(i * mPageSliderRes);
             }
