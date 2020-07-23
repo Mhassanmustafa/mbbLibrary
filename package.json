@@ -1,12 +1,12 @@
 {
-  "name": "react-native-mupdf",
+  "name": "mbbLibrary",
   "version": "1.0.0",
   "summary": "A react native PDF view component",
-  "description": "react-native-mupdf dependencies by com.lonelypluto:pdf-viewer:1.0.6",
+  "description": "Library to view pdf in App",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/React-Sextant/react-native-mupdf.git"
+    "url": "git+https://github.com/Mhassanmustafa/mbbLibrary.git"
   },
   "keywords": [
     "react",
@@ -14,13 +14,13 @@
     "mupdf"
   ],
   "author": {
-    "name": "1uokun",
-    "url": "https://github.com/1uokun"
+    "name": "Mhassanmustafa",
+    "url": "https://github.com/Mhassanmustafa"
   },
   "license": "MIT",
-  "homepage": "https://github.com/React-Sextant/react-native-mupdf",
+  "homepage": "https://github.com/Mhassanmustafa/mbbLibrary.git",
   "bugs": {
-    "url": "https://github.com/React-Sextant/react-native-mupdf/issues"
+    "url": "https://github.com/Mhassanmustafa/mbbLibrary/issues"
   },
   "dependencies": {
 
