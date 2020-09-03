@@ -44,7 +44,7 @@ android{
 See the detail in [./demo/app.js](https://github.com/Mhassanmustafa/mbbLibrary/blob/master/demo/app.js)
 
 ```jsx harmony
-import { startPDFActivity } from "react-native-mupdf";
+import { startPDFActivity } from "mbbLibrary";
 
 startPDFActivity({
   OpenMode: "",
