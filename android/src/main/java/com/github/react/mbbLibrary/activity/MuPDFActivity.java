@@ -1,5 +1,7 @@
 package com.github.react.mbbLibrary.activity;
 
+import java.util.regex.Pattern;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -57,14 +59,13 @@ import com.google.gson.JsonParser;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 
-public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExceptionHandler{
+public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExceptionHandler {
     private static final String TAG = MuPDFActivity.class.getSimpleName();
 
     private final int OUTLINE_REQUEST = 0;
     private String filePath = Environment.getExternalStorageDirectory() + "/Download/pdf_t2.pdf";
 
     private int mRCTPage;
-
 
     private AlertDialog.Builder mAlertBuilder;
 
@@ -96,25 +97,22 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
     private SearchTask mSearchTask;
     private boolean mLinkHighlight = false;
-	private int currentPage = 0;
+    private int currentPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mupdf);
 
-
         initView();
 
     }
 
-
     private void initView() {
         SharedPreferencesUtil.init(getApplication());
 
-        muPDFReaderView = (MuPDFReaderView)findViewById(R.id.mu_pdf_mupdfreaderview);
-        
-        
+        muPDFReaderView = (MuPDFReaderView) findViewById(R.id.mu_pdf_mupdfreaderview);
+
         Intent intent = getIntent();
         filePath = intent.getStringExtra("Uri");
         mRCTPage = intent.getIntExtra("Page", 0);
@@ -123,7 +121,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
         createPDF();
     }
-
 
     private void initToolsView() {
 
@@ -148,8 +145,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
     }
 
     private void createPDF() {
-        mAlertBuilder  = new AlertDialog.Builder(this);
-
+        mAlertBuilder = new AlertDialog.Builder(this);
 
         muPDFCore = openFile(filePath);
 
@@ -157,7 +153,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
         if (muPDFCore == null) {
             AlertDialog alert = mAlertBuilder.create();
-            alert.setTitle(R.string.cannot_open_document);
+            alert.setTitle(R.string.file_not_supported);
             alert.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.dismiss),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -177,26 +173,21 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
         muPDFReaderView.setAdapter(new MuPDFPageAdapter(this, muPDFCore));
 
-
-
         muPDFReaderView.setDisplayedViewIndex(mRCTPage);
-        
-
-
 
         RCTMuPdfModule.setUpListener(new MyListener() {
             @Override
             public void onEvent(String str) {
-                try{
+                try {
                     MuPDFView pageView = (MuPDFView) muPDFReaderView.getDisplayedView();
                     JsonParser jsonParser = new JsonParser();
                     JsonObject jsonObject = (JsonObject) jsonParser.parse(str);
 
-                    switch (jsonObject.get("type").getAsString()){
-
+                    switch (jsonObject.get("type").getAsString()) {
 
                         case "update_page":
-                            if(pageView!=null && jsonObject.get("page").getAsInt() >= 0 && jsonObject.get("page").getAsInt() != pageView.getPage()){
+                            if (pageView != null && jsonObject.get("page").getAsInt() >= 0
+                                    && jsonObject.get("page").getAsInt() != pageView.getPage()) {
                                 final int page = jsonObject.get("page").getAsInt();
 
                                 runOnUiThread(new Runnable() {
@@ -213,60 +204,64 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
                         case "add_annotation":
                             JsonArray jsonArray = jsonObject.get("path").getAsJsonArray();
-                            PointF[][] p=new PointF[jsonArray.size()][];
-                            for(int i=0;i<jsonArray.size();i++){
+                            PointF[][] p = new PointF[jsonArray.size()][];
+                            for (int i = 0; i < jsonArray.size(); i++) {
                                 JsonArray two = jsonArray.get(i).getAsJsonArray();
-                                PointF [] points=new PointF[two.size()];
-                                for(int j=0;j<two.size();j++){
-                                    points[j] = new PointF(two.get(j).getAsJsonArray().get(0).getAsFloat(),two.get(j).getAsJsonArray().get(1).getAsFloat());
+                                PointF[] points = new PointF[two.size()];
+                                for (int j = 0; j < two.size(); j++) {
+                                    points[j] = new PointF(two.get(j).getAsJsonArray().get(0).getAsFloat(),
+                                            two.get(j).getAsJsonArray().get(1).getAsFloat());
                                 }
                                 p[i] = points;
                             }
 
-                            if (pageView != null){
-                                pageView.saveDraw(jsonObject.get("page").getAsInt(), p,SharedPreferencesUtil.hextoRGB("#FF0000"),4);
+                            if (pageView != null) {
+                                pageView.saveDraw(jsonObject.get("page").getAsInt(), p,
+                                        SharedPreferencesUtil.hextoRGB("#FF0000"), 4);
                             }
                             break;
 
                         case "add_markup_annotation":
                             JsonArray jsonArray2 = jsonObject.get("path").getAsJsonArray();
-                            PointF[] p2=new PointF[jsonArray2.size()];
-                            for(int i=0;i<jsonArray2.size();i++){
-                                p2[i] = new PointF(jsonArray2.get(i).getAsJsonArray().get(0).getAsFloat(),jsonArray2.get(i).getAsJsonArray().get(1).getAsFloat());
+                            PointF[] p2 = new PointF[jsonArray2.size()];
+                            for (int i = 0; i < jsonArray2.size(); i++) {
+                                p2[i] = new PointF(jsonArray2.get(i).getAsJsonArray().get(0).getAsFloat(),
+                                        jsonArray2.get(i).getAsJsonArray().get(1).getAsFloat());
                             }
-                            if (pageView != null){
-                                switch (jsonObject.get("annotation_type").getAsString()){
+                            if (pageView != null) {
+                                switch (jsonObject.get("annotation_type").getAsString()) {
                                     case "UNDERLINE":
-                                        pageView.markupSelection(jsonObject.get("page").getAsInt(), p2, Annotation.Type.UNDERLINE);
-                                    break;
+                                        pageView.markupSelection(jsonObject.get("page").getAsInt(), p2,
+                                                Annotation.Type.UNDERLINE);
+                                        break;
                                     case "HIGHLIGHT":
-                                        pageView.markupSelection(jsonObject.get("page").getAsInt(), p2, Annotation.Type.HIGHLIGHT);
-                                    break;
+                                        pageView.markupSelection(jsonObject.get("page").getAsInt(), p2,
+                                                Annotation.Type.HIGHLIGHT);
+                                        break;
                                 }
-
 
                             }
                             break;
 
                         case "delete_annotation":
-                            if (pageView != null){
-                                pageView.deleteSelectedAnnotation(jsonObject.get("page").getAsInt(),jsonObject.get("annot_index").getAsInt());
+                            if (pageView != null) {
+                                pageView.deleteSelectedAnnotation(jsonObject.get("page").getAsInt(),
+                                        jsonObject.get("annot_index").getAsInt());
                             }
                             break;
                     }
 
-                }catch (Exception e) {
-                    Log.e(TAG,e.toString());
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
                 }
 
             }
         });
 
-        if(!RCTMuPdfModule.OpenMode.equals("Accused")){
+        if (!RCTMuPdfModule.OpenMode.equals("Accused")) {
             // Set up the page slider
             int smax = Math.max(muPDFCore.countPages() - 1, 1);
             mPageSliderRes = ((10 + smax - 1) / smax) * 2;
-           
 
             mSearchTask = new SearchTask(this, muPDFCore) {
                 @Override
@@ -286,7 +281,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             mSearchBack.setColorFilter(Color.argb(0xFF, 250, 250, 250));
             mSearchFwd.setColorFilter(Color.argb(0xFF, 250, 250, 250));
 
-
             if (muPDFCore.hasOutline()) {
 
                 mOutlineButton.setOnClickListener(new View.OnClickListener() {
@@ -303,11 +297,9 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
                 mOutlineButton.setVisibility(View.GONE);
             }
 
-
             setListener();
         }
     }
-
 
     private MuPDFCore openFile(String path) {
 
@@ -320,14 +312,14 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             Log.e(TAG, "openFile catch:" + e.toString());
             return null;
         } catch (OutOfMemoryError e) {
-            //  out of memory is not an Exception, so we catch it separately.
+            // out of memory is not an Exception, so we catch it separately.
             Log.e(TAG, "openFile catch: OutOfMemoryError " + e.toString());
             return null;
         }
         return muPDFCore;
     }
 
-    private void setListener(){
+    private void setListener() {
 
         setMuPDFReaderViewListener();
 
@@ -339,8 +331,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
 
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 updatePageNumView((progress + mPageSliderRes / 2) / mPageSliderRes);
             }
         });
@@ -351,7 +342,8 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             }
         });
 
-        if (muPDFCore.fileFormat().startsWith("PDF") && muPDFCore.isUnencryptedPDF() && !muPDFCore.wasOpenedFromBuffer()) {
+        if (muPDFCore.fileFormat().startsWith("PDF") && muPDFCore.isUnencryptedPDF()
+                && !muPDFCore.wasOpenedFromBuffer()) {
             mAnnotButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mTopBarMode = TopBarMode.Annot;
@@ -370,22 +362,21 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
                 setButtonEnabled(mSearchFwd, haveText);
 
                 // Remove any previous search results
-                if (SearchTaskResult.get() != null && !et_searchText.getText().toString().equals(SearchTaskResult.get().txt)) {
+                if (SearchTaskResult.get() != null
+                        && !et_searchText.getText().toString().equals(SearchTaskResult.get().txt)) {
                     SearchTaskResult.set(null);
                     muPDFReaderView.resetupChildren();
                 }
             }
 
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
 
-        //React to Done button on keyboard
+        // React to Done button on keyboard
         et_searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE)
@@ -416,34 +407,32 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
         mLinkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               // setLinkHighlight(!mLinkHighlight);
-               muPDFCore.getDark();
-               mRCTPage = currentPage;
-               muPDFReaderView.setDisplayedViewIndex(mRCTPage);
-            //    SharedPreferencesUtil.init(getApplication());
-              
-            //     muPDFReaderView = (MuPDFReaderView)findViewById(R.id.mu_pdf_mupdfreaderview);
-                
-            //     mRCTPage = currentPage;
+                // setLinkHighlight(!mLinkHighlight);
+                muPDFCore.getDark();
+                mRCTPage = currentPage;
+                muPDFReaderView.setDisplayedViewIndex(mRCTPage);
+                // SharedPreferencesUtil.init(getApplication());
 
-            //     initToolsView();
+                // muPDFReaderView = (MuPDFReaderView)findViewById(R.id.mu_pdf_mupdfreaderview);
 
-            //     createPDF();
+                // mRCTPage = currentPage;
+
+                // initToolsView();
+
+                // createPDF();
             }
         });
     }
 
-
-    private void setMuPDFReaderViewListener(){
+    private void setMuPDFReaderViewListener() {
         muPDFReaderView.setListener(new MuPDFReaderViewListener() {
             @Override
             public void onMoveToChild(int i) {
                 if (muPDFCore == null) {
                     return;
                 }
-                mPageNumberView.setText(String.format("%d / %d", i + 1,
-                        muPDFCore.countPages()));
-						currentPage = i;
+                mPageNumberView.setText(String.format("%d / %d", i + 1, muPDFCore.countPages()));
+                currentPage = i;
                 mPageSlider.setMax((muPDFCore.countPages() - 1) * mPageSliderRes);
                 mPageSlider.setProgress(i * mPageSliderRes);
             }
@@ -504,18 +493,16 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
     @Override
     public void uncaughtException(final Thread thread, final Throwable throwable) {
         new Thread() {
             @Override
             public void run() {
                 RCTMuPdfModule.mPromise.reject(throwable.getMessage());
-                
+
             }
         }.start();
     }
-
 
     private void showButtons() {
         if (muPDFCore == null)
@@ -565,7 +552,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         }
     }
 
-
     private void hideButtons() {
         if (mButtonsVisible) {
             mButtonsVisible = false;
@@ -604,13 +590,11 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         }
     }
 
-
     private void updatePageNumView(int index) {
         if (muPDFCore == null)
             return;
         mPageNumberView.setText(String.format("%d / %d", index + 1, muPDFCore.countPages()));
     }
-
 
     private void showKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -618,19 +602,16 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             imm.showSoftInput(et_searchText, 0);
     }
 
-
     private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null)
             imm.hideSoftInputFromWindow(et_searchText.getWindowToken(), 0);
     }
 
-
     public void OnEditAnnotButtonClick(View v) {
         mTopBarMode = TopBarMode.Main;
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
     }
-
 
     public void OnCopyTextButtonClick(View v) {
         mTopBarMode = TopBarMode.Accept;
@@ -641,28 +622,24 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         showInfo(getString(R.string.select_text));
     }
 
-
     public void OnCancelSearchButtonClick(View v) {
         searchModeOff();
     }
-
 
     public void OnCancelMoreButtonClick(View v) {
         mTopBarMode = TopBarMode.Main;
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
     }
 
-
     private void searchModeOn() {
         if (mTopBarMode != TopBarMode.Search) {
             mTopBarMode = TopBarMode.Search;
-            //Focus on EditTextWidget
+            // Focus on EditTextWidget
             et_searchText.requestFocus();
             showKeyboard();
             mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
         }
     }
-
 
     private void searchModeOff() {
         if (mTopBarMode == TopBarMode.Search) {
@@ -676,7 +653,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         }
     }
 
-
     public void OnHighlightButtonClick(View v) {
         mTopBarMode = TopBarMode.Accept;
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
@@ -685,7 +661,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         mAnnotTypeText.setText(R.string.pdf_tools_highlight);
         showInfo(getString(R.string.select_text));
     }
-
 
     public void OnUnderlineButtonClick(View v) {
         mTopBarMode = TopBarMode.Accept;
@@ -696,7 +671,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         showInfo(getString(R.string.select_text));
     }
 
-
     public void OnStrikeOutButtonClick(View v) {
         mTopBarMode = TopBarMode.Accept;
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
@@ -705,7 +679,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         mAnnotTypeText.setText(R.string.pdf_tools_strike_out);
         showInfo(getString(R.string.select_text));
     }
-
 
     public void OnInkButtonClick(View v) {
         mTopBarMode = TopBarMode.Accept;
@@ -716,7 +689,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         showInfo(getString(R.string.pdf_tools_draw_annotation));
     }
 
-    private void refresh(){
+    private void refresh() {
         mRCTPage = currentPage;
         muPDFReaderView.setDisplayedViewIndex(mRCTPage);
     }
@@ -725,12 +698,11 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         MuPDFView pageView = (MuPDFView) muPDFReaderView.getDisplayedView();
         if (pageView != null)
             pageView.deleteSelectedAnnotation();
-            refresh();
+        refresh();
 
         mTopBarMode = TopBarMode.Annot;
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
     }
-
 
     public void OnCancelDeleteButtonClick(View v) {
         MuPDFView pageView = (MuPDFView) muPDFReaderView.getDisplayedView();
@@ -739,7 +711,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         mTopBarMode = TopBarMode.Annot;
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
     }
-
 
     public void OnCancelAcceptButtonClick(View v) {
         MuPDFView pageView = (MuPDFView) muPDFReaderView.getDisplayedView();
@@ -759,7 +730,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
     }
 
-
     public void OnAcceptButtonClick(View v) {
         MuPDFView pageView = (MuPDFView) muPDFReaderView.getDisplayedView();
         boolean success = false;
@@ -767,7 +737,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             case CopyText:
                 if (pageView != null)
                     success = pageView.copySelection();
-                    refresh();
+                refresh();
                 mTopBarMode = TopBarMode.Main;
                 showInfo(success ? getString(R.string.copied_to_clipboard) : getString(R.string.no_text_selected));
                 break;
@@ -784,7 +754,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             case Underline:
                 if (pageView != null)
                     success = pageView.markupSelection(Annotation.Type.UNDERLINE);
-                    refresh();
+                refresh();
                 mTopBarMode = TopBarMode.Annot;
                 if (!success)
                     showInfo(getString(R.string.no_text_selected));
@@ -793,7 +763,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             case StrikeOut:
                 if (pageView != null)
                     success = pageView.markupSelection(Annotation.Type.STRIKEOUT);
-                    refresh();
+                refresh();
                 mTopBarMode = TopBarMode.Annot;
                 if (!success)
                     showInfo(getString(R.string.no_text_selected));
@@ -802,7 +772,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
             case Ink:
                 if (pageView != null)
                     success = pageView.saveDraw();
-                    refresh();
+                refresh();
                 mTopBarMode = TopBarMode.Annot;
                 if (!success)
                     showInfo(getString(R.string.nothing_to_save));
@@ -811,7 +781,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         mTopBarSwitcher.setDisplayedChild(mTopBarMode.ordinal());
         muPDFReaderView.setMode(MuPDFReaderView.Mode.Viewing);
     }
-
 
     private void setButtonEnabled(ImageButton button, boolean enabled) {
         button.setEnabled(enabled);
@@ -823,24 +792,36 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         int displayPage = muPDFReaderView.getDisplayedViewIndex();
         SearchTaskResult r = SearchTaskResult.get();
         int searchPage = r != null ? r.pageNumber : -1;
-        mSearchTask.go(et_searchText.getText().toString(), direction, displayPage, searchPage);
+        mSearchTask.go(align(et_searchText.getText().toString()), direction, displayPage, searchPage);
     }
 
+    public boolean is_English(String value) {
+        Pattern VALID_NAME_PATTERN_REGEX = Pattern.compile("[a-zA-Z_0-9]+$");
+
+        return VALID_NAME_PATTERN_REGEX.matcher(value).find();
+    }
+
+    public String align(String str) {
+        if (is_English(str)) {
+            return str;
+        } else {
+            return new StringBuilder(str).reverse().toString();
+        }
+    }
 
     // private void setLinkHighlight(boolean highlight) {
-    //     mLinkHighlight = highlight;
-    //     // LINK_COLOR tint
-    //     mLinkButton.setColorFilter(highlight ? Color.argb(0xFF, 255, 160, 0) : Color.argb(0xFF, 255, 255, 255));
-    //     // Inform pages of the change.
-    //     muPDFReaderView.setLinksEnabled(highlight);
+    // mLinkHighlight = highlight;
+    // // LINK_COLOR tint
+    // mLinkButton.setColorFilter(highlight ? Color.argb(0xFF, 255, 160, 0) :
+    // Color.argb(0xFF, 255, 255, 255));
+    // // Inform pages of the change.
+    // muPDFReaderView.setLinksEnabled(highlight);
     // }
-
 
     private void showInfo(String message) {
 
         LayoutInflater inflater = getLayoutInflater();
-        View toastLayout = inflater.inflate(R.layout.toast,
-                (ViewGroup) findViewById(R.id.toast_root_view));
+        View toastLayout = inflater.inflate(R.layout.toast, (ViewGroup) findViewById(R.id.toast_root_view));
 
         TextView header = (TextView) toastLayout.findViewById(R.id.toast_message);
         header.setText(message);
@@ -962,7 +943,6 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         mAlertTask.executeOnExecutor(new ThreadPerTaskExecutor());
     }
 
-
     public void destroyAlertWaiter() {
         mAlertsActive = false;
         if (mAlertDialog != null) {
@@ -986,10 +966,27 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
     @Override
     protected void onPause() {
+
+        if (muPDFCore != null && muPDFCore.checkFileEncrypted() == false) {
+            System.out.println("hello pause call");
+            encryptPdf();
+        }
         super.onPause();
+
         if (mSearchTask != null) {
             mSearchTask.stop();
         }
+    }
+
+    @Override
+    protected void onResume() {
+
+        if (muPDFCore != null) {
+            if (muPDFCore.checkFileEncrypted()) {
+                decryptPdf();
+            }
+        }
+        super.onResume();
     }
 
     @Override
@@ -1003,6 +1000,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
 
     @Override
     protected void onDestroy() {
+
         if (muPDFReaderView != null) {
             muPDFReaderView.applyToChildren(new ReaderView.ViewMapper() {
                 public void applyToView(View view) {
@@ -1010,8 +1008,13 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
                 }
             });
         }
-        if (muPDFCore != null)
+        if (muPDFCore != null) {
+            if (muPDFCore.checkFileEncrypted() == false) {
+                encryptPdf();
+            }
             muPDFCore.onDestroy();
+        }
+
         if (mAlertTask != null) {
             mAlertTask.cancel(true);
             mAlertTask = null;
@@ -1027,6 +1030,9 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
                 public void onClick(DialogInterface dialog, int which) {
                     if (which == AlertDialog.BUTTON_POSITIVE) {
                         muPDFCore.save();
+                        if (!muPDFCore.checkFileEncrypted()) {
+                            encryptPdf();
+                        }
                     }
                     finish();
                 }
@@ -1042,6 +1048,23 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         }
     }
 
+    private void encryptPdf() {
+
+        try {
+            muPDFCore.encryptWithAes(muPDFCore.getCurrentFilePath(), muPDFCore.getAndriodId(this).getBytes());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private void decryptPdf() {
+        try {
+            muPDFCore.decryptWithAes(muPDFCore.getCurrentFilePath(), muPDFCore.getAndriodId(this).getBytes());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     class ThreadPerTaskExecutor implements Executor {
         public void execute(Runnable r) {
@@ -1049,11 +1072,9 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         }
     }
 
-
     enum TopBarMode {
         Main, Search, Annot, Delete, Accept
     }
-
 
     enum AcceptMode {
         Highlight, Underline, StrikeOut, Ink, CopyText

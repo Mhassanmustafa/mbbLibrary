@@ -52,4 +52,5 @@
     <string name="signature_checked">Signature checked</string>
     <string name="text_not_found">Text not Found</string>
     <string name="yes">yes</string>
+     <string name= "file_not_supported">File is not supported for this app</string>
 </resources>
