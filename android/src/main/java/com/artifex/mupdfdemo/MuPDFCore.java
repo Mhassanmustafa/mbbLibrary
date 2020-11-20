@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.CipherOutputStream;
 
 @SuppressWarnings("JniMissingFunction")
 public class MuPDFCore {
@@ -484,31 +486,41 @@ public class MuPDFCore {
 
 	// @SuppressLint("NewApi")
 	public void encryptWithAes(String filenamePlain, byte[] key) throws Exception {
-		Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-		GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, key);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, gcmParameterSpec);
+
+		IvParameterSpec iv = new IvParameterSpec("digitalBookRepos".getBytes("UTF-8"));
+
+		cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
+
+		// Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+		// SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+		// GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, key);
+		// cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, gcmParameterSpec);
 		String orginalPath = filenamePlain.substring(0, filenamePlain.lastIndexOf("/")) + "/";
 		String fileName = filenamePlain.substring(filenamePlain.lastIndexOf("/") + 1);
 		String path_ = (orginalPath + "enc" + fileName);
 
 		FileInputStream fis = new FileInputStream(filenamePlain);
-		BufferedInputStream in = new BufferedInputStream(fis);
-		FileOutputStream out = new FileOutputStream(path_);
-		BufferedOutputStream bos = new BufferedOutputStream(out);
-		byte[] ibuf = new byte[1024];
+		// BufferedInputStream in = new BufferedInputStream(fis);
+		FileOutputStream fos = new FileOutputStream(path_);
+		CipherOutputStream cos = new CipherOutputStream(fos, cipher);
+
+		byte[] ibuf = new byte[4096];
 		int len;
-		while ((len = in.read(ibuf)) != -1) {
+		while ((len = fis.read(ibuf)) != -1) {
 			byte[] obuf = cipher.update(ibuf, 0, len);
 			if (obuf != null)
-				bos.write(obuf);
+				fos.write(obuf);
 		}
 		byte[] obuf = cipher.doFinal();
 		if (obuf != null)
-			bos.write(obuf);
+			fos.write(obuf);
 
-		bos.flush();
-		bos.close();
+		fos.flush();
+		fos.close();
+		cos.close();
 		fis.close();
 		encryptFlag = true;
 		File dir = new File(orginalPath);
@@ -529,13 +541,21 @@ public class MuPDFCore {
 
 		FileInputStream in = new FileInputStream(filenameEnc);
 		FileOutputStream out = new FileOutputStream(path_);
-		byte[] ibuf = new byte[1024];
+		byte[] ibuf = new byte[4096];
 		int len;
-		Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-		SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
-		GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, key);
 
-		cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, gcmParameterSpec);
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+
+		SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+
+		// Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+		// SecretKeySpec secretKeySpec = new SecretKeySpec(key, "AES");
+		// GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, key);
+
+		// cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, gcmParameterSpec);
+		IvParameterSpec iv = new IvParameterSpec("digitalBookRepos".getBytes("UTF-8"));
+		cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
+
 		while ((len = in.read(ibuf)) != -1) {
 			byte[] obuf = cipher.update(ibuf, 0, len);
 			if (obuf != null)
@@ -546,6 +566,8 @@ public class MuPDFCore {
 			out.write(obuf);
 		out.flush();
 		out.close();
+		in.close();
+
 		encryptFlag = false;
 		File dir = new File(orignalPath);
 		if (dir.exists()) {
