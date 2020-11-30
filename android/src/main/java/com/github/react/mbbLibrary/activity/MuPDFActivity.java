@@ -30,6 +30,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
+import android.view.WindowManager;
 
 import com.artifex.mupdfdemo.Annotation;
 import com.artifex.mupdfdemo.Hit;
@@ -102,6 +103,7 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_mupdf);
 
         initView();

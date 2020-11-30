@@ -62,28 +62,28 @@
                 android:id="@+id/searchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_toStartOf="@+id/moreButton"
-                android:background="@drawable/pdf_tools_btn_bg"
-                android:contentDescription="@string/pdf_tools_search_document"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_search_white_48dp" />
-
-            <ImageButton
-                android:id="@+id/moreButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:background="@drawable/pdf_tools_btn_bg"
-                android:contentDescription="@string/pdf_tools_copy"
-                android:onClick="OnCopyTextButtonClick"
+                android:contentDescription="@string/pdf_tools_search_document"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_content_copy_white_48dp" />
+                android:src="@drawable/ic_search_white_48dp" />
+
+<!--            <ImageButton-->
+<!--                android:id="@+id/moreButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_marginTop="2dp"-->
+<!--                android:layout_marginBottom="2dp"-->
+<!--                android:background="@drawable/pdf_tools_btn_bg"-->
+<!--                android:contentDescription="@string/pdf_tools_copy"-->
+<!--                android:onClick="OnCopyTextButtonClick"-->
+<!--                android:scaleType="fitCenter"-->
+<!--                android:src="@drawable/ic_content_copy_white_48dp" />-->
 
             
 
