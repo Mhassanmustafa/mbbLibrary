@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,7 +31,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
-import android.view.WindowManager;
 
 import com.artifex.mupdfdemo.Annotation;
 import com.artifex.mupdfdemo.Hit;
@@ -807,8 +807,41 @@ public class MuPDFActivity extends ReactActivity implements Thread.UncaughtExcep
         if (is_English(str)) {
             return str;
         } else {
-            return new StringBuilder(str).reverse().toString();
+            String original, reverse = "";
+
+            original = str;
+
+            int length = original.length();
+
+            for (int i = length - 1; i >= 0; i--)
+                reverse = reverse + original.charAt(i);
+
+            return reverseName(reverse);
         }
+    }
+
+    public static String reverseName(String name) {
+
+        name = name.trim();
+
+        StringBuilder reversedNameBuilder = new StringBuilder();
+        StringBuilder subNameBuilder = new StringBuilder();
+
+        for (int i = 0; i < name.length(); i++) {
+
+            char currentChar = name.charAt(i);
+
+            if (currentChar != ' ' && currentChar != '-') {
+                subNameBuilder.append(currentChar);
+            } else {
+                reversedNameBuilder.insert(0, currentChar + subNameBuilder.toString());
+                subNameBuilder.setLength(0);
+            }
+
+        }
+
+        return reversedNameBuilder.insert(0, subNameBuilder.toString()).toString();
+
     }
 
     // private void setLinkHighlight(boolean highlight) {

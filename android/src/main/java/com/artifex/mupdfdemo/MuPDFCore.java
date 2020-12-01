@@ -17,12 +17,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.CipherOutputStream;
 
 @SuppressWarnings("JniMissingFunction")
 public class MuPDFCore {
@@ -73,7 +74,7 @@ public class MuPDFCore {
 	private native void updatePageInternal(Bitmap bitmap, int page, int pageW, int pageH, int patchX, int patchY,
 			int patchW, int patchH, long cookiePtr, int mode);
 
-	private native RectF[] searchPage(String text);
+	private native RectF[] searchPage(String text, int textFlag);
 
 	private native TextChar[][][][] text();
 
@@ -349,9 +350,19 @@ public class MuPDFCore {
 		return getAnnotationsInternal(page);
 	}
 
+	public boolean is_English(String value) {
+		Pattern VALID_NAME_PATTERN_REGEX = Pattern.compile("[a-zA-Z_0-9]+$");
+
+		return VALID_NAME_PATTERN_REGEX.matcher(value).find();
+	}
+
 	public synchronized RectF[] searchPage(int page, String text) {
 		gotoPage(page);
-		return searchPage(text);
+		if (is_English(text)) {
+			return searchPage(text, 0);
+		} else {
+			return searchPage(text, 1);
+		}
 	}
 
 	public synchronized byte[] html(int page) {
